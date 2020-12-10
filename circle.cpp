@@ -7,8 +7,8 @@ int main()
 {
     const int size = 400;
     bool curr[size], prev[size];
-    int y, vershx = 0, leftx = 0, vershy, i, r, x;
-    ifstream file("..\\inputs\\input3.dat");
+    int y, vershx = 0, leftx = 0, vershy, r, x; //план: найти x0 через середину верхнего отрезка окружности, найти самый левый x, при х-х0 получить радиус и прибавить его к y вершины
+    ifstream file("..\\inputs\\input.dat");
     if (!file.is_open()) {
         cout << "No file" << endl;
         return -1;
@@ -18,24 +18,28 @@ int main()
     }
     for (int y = 1; y < size; y++) {
         for (x = 0; x < size; x++) {
+            if (x > 2) prev[x-2] = curr[x-2]; //значения x и x-1 нам еще понадобятся
             file >> curr[x];
             if (curr[x] && prev[x] && !vershx) {
-                for (i = 0; prev[x + i]; i++) {
+                for (int i = 0; prev[x + i]; i++) {
                     vershx++;
                 }
                 vershx = vershx/2 + x;
                 vershy = y;
             }
             else if (x > 1 && x < vershx && curr[x] && !curr[x-1] && prev[x] && prev[x - 1]) {
+                for (int i = x - 1; prev[i] == 1; --i) {    //возможна ситуация, при которой одна из лишних единиц снизу "приклеится" к окружности
+                    if (curr[i] == 1) continue;
+                }
                 leftx = x - 1;
                 break;
             }  
-            if (x > 0) prev[x-1] = curr[x-1];
+            
         }
         if (x > 0) prev[x - 1] = curr[x - 1];
         if (leftx) break;
     }
-    ofstream out("..\\inputs\\output3.dat");
+    ofstream out("..\\inputs\\output.dat");
     if (!out.is_open()) {
         cout << "Could not create a file" << endl;
         return -4;
